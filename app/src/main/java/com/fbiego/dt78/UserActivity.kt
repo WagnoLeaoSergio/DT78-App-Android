@@ -60,7 +60,7 @@ class UserActivity : AppCompatActivity() {
         val current = ArrayList<Int>()
 
         val names = arrayListOf(getString(R.string.age), getString(R.string.step_len), getString(R.string.height),
-            getString(R.string.weight), getString(R.string.target))
+            getString(R.string.weight), getString(R.string.target), "Email")
         val dbHandler = MyDBHandler(this, null, null, 1)
 
 
@@ -106,8 +106,8 @@ class UserActivity : AppCompatActivity() {
 
         val user = dbHandler.getUser()
         val values = arrayListOf("${user.age} "+getString(R.string.years), "${user.step} "+getString(R.string.cm),
-            "${user.height} "+getString(R.string.cm), "${user.weight} "+getString(R.string.kg), "${user.target} "+getString(R.string.steps))
-        val icons = arrayListOf(R.drawable.ic_user, R.drawable.ic_length, R.drawable.ic_height, R.drawable.ic_weight, R.drawable.ic_steps)
+            "${user.height} "+getString(R.string.cm), "${user.weight} "+getString(R.string.kg), "${user.target} "+getString(R.string.steps), "wagnoleao@gmail.com")
+        val icons = arrayListOf(R.drawable.ic_user, R.drawable.ic_length, R.drawable.ic_height, R.drawable.ic_weight, R.drawable.ic_steps, R.drawable.ic_user)
 
 
 
@@ -153,6 +153,13 @@ class UserActivity : AppCompatActivity() {
                     for (x in 4 until 50){
                         items.add("${x*1000} "+getString(R.string.steps))
                         value.add(x*1000)
+                    }
+                }
+                5 -> {
+                    title = "Email"
+                    for (x in 4 until 50){
+                        items.add("wagnoleao@gmail.com")
+                        value.add(x)
                     }
                 }
             }
