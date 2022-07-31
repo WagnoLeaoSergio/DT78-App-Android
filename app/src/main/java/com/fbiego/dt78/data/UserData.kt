@@ -32,10 +32,11 @@ class UserData(
     var age: Int,
     var height: Int,
     var weight: Int,
-    var target: Int
+    var target: Int,
+    var email: String
 )  {
     fun data(): Array<String>{
-        return arrayOf("$age yrs", "$step cm", "$height cm", "$weight kg", "$target steps")
+        return arrayOf("$age yrs", "$step cm", "$height cm", "$weight kg", "$target steps", "$email")
     }
 
 }
