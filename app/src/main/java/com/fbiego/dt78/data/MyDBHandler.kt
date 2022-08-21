@@ -1098,7 +1098,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
     }
 
     fun getUser(): UserData {
-        var user = UserData(0, "Name", 60, 18, 150, 60, 5000)
+        var user = UserData(0, "Name", 60, 18, 150, 60, 5000, "Email")
         val query = "SELECT * FROM $USER_TABLE WHERE $COLUMN_ID = 0"
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
@@ -1111,6 +1111,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
             user.weight = cursor.getInt(4)
             user.target = cursor.getInt(5)
             user.name = "name"
+            user.email = "email"
         }
         cursor.close()
         db.close()

@@ -333,7 +333,7 @@ class BackupRestoreActivity : AppCompatActivity() {
                     }
                     l.startsWith("BA:") -> {    //user
                         val data = l.substring(3, l.length).split("-").map { it.toInt() }
-                        dbHandler.insertUser(UserData(0, "name", data[1], data[0], data[2], data[3], data[4]))
+                        dbHandler.insertUser(UserData(0, "name", data[1], data[0], data[2], data[3], data[4], "email"))
 
                     }
                     l.startsWith("BB:") -> {    //settings

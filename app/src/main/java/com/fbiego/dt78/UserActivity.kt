@@ -32,6 +32,10 @@ import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
+import android.widget.EditText
+import android.widget.TextView
+import android.text.Editable
+import android.text.TextWatcher
 import com.fbiego.dt78.app.CrashLogger
 import com.fbiego.dt78.app.SettingsActivity
 import com.fbiego.dt78.data.MyDBHandler
@@ -105,12 +109,30 @@ class UserActivity : AppCompatActivity() {
         }
 
         val user = dbHandler.getUser()
-        val values = arrayListOf("${user.age} "+getString(R.string.years), "${user.step} "+getString(R.string.cm),
-            "${user.height} "+getString(R.string.cm), "${user.weight} "+getString(R.string.kg), "${user.target} "+getString(R.string.steps), "wagnoleao@gmail.com")
+        val values = arrayListOf(
+            "${user.age} "+getString(R.string.years),
+            "${user.step} "+getString(R.string.cm),
+            "${user.height} "+getString(R.string.cm),
+            "${user.weight} "+getString(R.string.kg),
+            "${user.target} "+getString(R.string.steps),
+            "${user.email}"
+        )
         val icons = arrayListOf(R.drawable.ic_user, R.drawable.ic_length, R.drawable.ic_height, R.drawable.ic_weight, R.drawable.ic_steps, R.drawable.ic_user)
 
+        val emailView: EditText = findViewById(R.id.emailAddressField) as EditText
+        var emailText = "${user.email}"
 
+        emailView.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
 
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                user.email = s.toString()
+            }
+        })
 
         val myUserList = UserListAdapter(this, icons, names, values, null)
         userListView.adapter = myUserList
@@ -153,13 +175,6 @@ class UserActivity : AppCompatActivity() {
                     for (x in 4 until 50){
                         items.add("${x*1000} "+getString(R.string.steps))
                         value.add(x*1000)
-                    }
-                }
-                5 -> {
-                    title = "Email"
-                    for (x in 4 until 50){
-                        items.add("wagnoleao@gmail.com")
-                        value.add(x)
                     }
                 }
             }
