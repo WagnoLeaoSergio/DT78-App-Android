@@ -38,6 +38,7 @@ import android.view.animation.Transformation
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,7 +52,8 @@ import kotlinx.android.synthetic.main.activity_health.*
 import no.nordicsemi.android.ble.data.Data
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
+import java.io.IOException
+import okhttp3.*
 import com.fbiego.dt78.app.ForegroundService as FG
 
 
@@ -312,6 +314,33 @@ class HealthActivity : AppCompatActivity(), DataListener {
         healthAdapter.update(healthList)
     }
 
+    fun uploadData() {
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url("http://publicobject.com/helloworld.txt")
+            .build()
+
+        // Coroutines not supported directly, use the basic Callback way:
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful)
+                        throw IOException("Unexpected code $response")
+
+                    for ((name, value) in response.headers) {
+                        Timber.d("$name: $value")
+                    }
+                    Timber.d(response.body!!.string())
+                }
+            }
+        })
+    }
+
     override fun onPause() {
         super.onPause()
         stopMeasure()
@@ -486,6 +515,27 @@ class HealthActivity : AppCompatActivity(), DataListener {
                         )
                     )
                 }
+
+                /*
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Testando")
+                builder.setMessage("We have a message")
+                //builder.setPositiveButton("OK", DialogInterface.OnClickListener(function = x))
+                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                    Toast.makeText(applicationContext,
+                        android.R.string.yes, Toast.LENGTH_SHORT).show()
+                }
+                builder.setNegativeButton(android.R.string.no) { dialog, which ->
+                    Toast.makeText(applicationContext,
+                        android.R.string.no, Toast.LENGTH_SHORT).show()
+                }
+                builder.setNeutralButton("Maybe") { dialog, which ->
+                    Toast.makeText(applicationContext,
+                        "Maybe", Toast.LENGTH_SHORT).show()
+                }
+                builder.show()
+                */
+                uploadData()
             }
 
             healthList = when (viewH) {
