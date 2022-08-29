@@ -54,6 +54,9 @@ import timber.log.Timber
 import java.util.*
 import java.io.IOException
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import com.fbiego.dt78.app.ForegroundService as FG
 
 
@@ -314,11 +317,15 @@ class HealthActivity : AppCompatActivity(), DataListener {
         healthAdapter.update(healthList)
     }
 
-    fun uploadData() {
+    fun uploadData(email: String, heart_rate: Int, blood_preassure: Int, oxygen_saturation: Int) {
         val client = OkHttpClient()
 
+        val json = "{\"email\":\"wagnoleao@gmail.com\",\"heart_rate\":$heart_rate,\"blood_preassure\":$blood_preassure,\"oxygen_saturation\":$oxygen_saturation}"
+        val body : RequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
         val request = Request.Builder()
-            .url("http://publicobject.com/helloworld.txt")
+            .url("https://lemon-socks-enjoy-189-95-79-134.loca.lt/data/health")
+            .post(body)
             .build()
 
         // Coroutines not supported directly, use the basic Callback way:
@@ -535,7 +542,7 @@ class HealthActivity : AppCompatActivity(), DataListener {
                 }
                 builder.show()
                 */
-                uploadData()
+                uploadData("wagnoleao@gmail.com", bp, bph, sp)
             }
 
             healthList = when (viewH) {
