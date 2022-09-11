@@ -823,11 +823,6 @@ class ForegroundService : Service(), MessageListener, PhonecallListener, DataLis
 
             val dbHandler = MyDBHandler(context, null, null, 1)
             val cal = Calendar.getInstance(Locale.getDefault())
-
-            Timber.d("pendingId: ${pendingId}")
-            Timber.d("hour of day: ${cal.get(Calendar.HOUR_OF_DAY)}")
-            Timber.d("minute: ${cal.get(Calendar.MINUTE)}")
-            Timber.d("second: ${cal.get(Calendar.SECOND)}")
             
             if (pendingMeasure){
                 if (pendingId == cal.get(Calendar.HOUR_OF_DAY) && cal.get(Calendar.MINUTE) <= 30){
@@ -1528,7 +1523,9 @@ class ForegroundService : Service(), MessageListener, PhonecallListener, DataLis
                         isNull = false
                     }
 
-                    uploadData("wagnoleao@gmail.com", bp, bph, sp)
+                    val user = dbHandler.getUser()
+                    Timber.d(user.email)
+                    uploadData(user.email, bp, bph, sp)
 
                     val s = context.getString(R.string.scheduled)
                     val title = if (s.length > 25) s.substring(0, 25) else s

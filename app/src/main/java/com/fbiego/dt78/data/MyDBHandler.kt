@@ -29,6 +29,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import androidx.core.database.getStringOrNull
 import com.fbiego.dt78.R
 import timber.log.Timber
 import java.util.*
@@ -40,7 +41,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
     private val cnt = context
 
     companion object {
-        private const val DATABASE_NAME = "watch_data"
+        private const val DATABASE_NAME = "watch_data2"
         private const val DATABASE_VERSION = 9
         const val STEPS_TABLE = "stepsData"
         const val HRM_TABLE = "heartRate"
@@ -84,6 +85,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
         const val COLUMN_WEIGHT = "weight"
         const val COLUMN_TEXT = "text"
         const val COLUMN_LEVEL = "level"
+        const val COLUMN_EMAIL = "email"
     }
     override fun onCreate(p0: SQLiteDatabase?) {
         val createStepsTable = ("CREATE TABLE " + STEPS_TABLE + "(" + COLUMN_ID + " INTEGER PRIMARY KEY,"
@@ -104,7 +106,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
         val createAlarmTable = ("CREATE TABLE $ALARM_TABLE ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_STATE INTEGER, $COLUMN_HOUR INTEGER," +
                 "$COLUMN_MIN INTEGER, $COLUMN_REPEAT INTEGER )")
         val createUserTable = ("CREATE TABLE $USER_TABLE ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_AGE INTEGER, $COLUMN_LENGTH INTEGER," +
-                "$COLUMN_HEIGHT INTEGER, $COLUMN_WEIGHT INTEGER, $COLUMN_STEPS INTEGER)")
+                "$COLUMN_HEIGHT INTEGER, $COLUMN_WEIGHT INTEGER, $COLUMN_STEPS INTEGER, $COLUMN_EMAIL TEXT)")
         val createSetTable = ("CREATE TABLE $SET_TABLE ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_HOUR INTEGER, $COLUMN_MIN INTEGER," +
                 "$COLUMN_HOUR2 INTEGER, $COLUMN_MIN2 INTEGER, $COLUMN_STATE INTEGER, $COLUMN_INTERVAL INTEGER)")
         val createContactsTable = ("CREATE TABLE $CONTACTS_TABLE ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_NAME TEXT, $COLUMN_NUMBER TEXT)")
@@ -132,7 +134,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
             val text = "Reminder $rm"
             p0?.execSQL("INSERT INTO $REMINDER_TABLE ($COLUMN_ID, $COLUMN_HOUR, $COLUMN_MIN, $COLUMN_TYPE, $COLUMN_STATE, $COLUMN_TEXT) VALUES($rm, 0, 0, 0, 0, '$text')")
         }
-        p0?.execSQL("INSERT INTO $USER_TABLE ($COLUMN_ID, $COLUMN_AGE, $COLUMN_LENGTH, $COLUMN_HEIGHT, $COLUMN_WEIGHT, $COLUMN_STEPS ) VALUES(0, 18, 60, 150, 60, 5000)")
+        p0?.execSQL("INSERT INTO $USER_TABLE ($COLUMN_ID, $COLUMN_AGE, $COLUMN_LENGTH, $COLUMN_HEIGHT, $COLUMN_WEIGHT, $COLUMN_STEPS, $COLUMN_EMAIL) VALUES(0, 18, 60, 150, 60, 5000, 'email')")
 
     }
 
@@ -141,7 +143,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
                 "$COLUMN_MIN INTEGER, $COLUMN_REPEAT INTEGER )")
 
         val createUserTable = ("CREATE TABLE IF NOT EXISTS $USER_TABLE ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_AGE INTEGER, $COLUMN_LENGTH INTEGER," +
-                "$COLUMN_HEIGHT INTEGER, $COLUMN_WEIGHT INTEGER, $COLUMN_STEPS INTEGER)")
+                "$COLUMN_HEIGHT INTEGER, $COLUMN_WEIGHT INTEGER, $COLUMN_STEPS INTEGER, $COLUMN_EMAIL TEXT)")
         val createSetTable = ("CREATE TABLE IF NOT EXISTS $SET_TABLE ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_HOUR INTEGER, $COLUMN_MIN INTEGER," +
                 "$COLUMN_HOUR2 INTEGER, $COLUMN_MIN2 INTEGER, $COLUMN_STATE INTEGER, $COLUMN_INTERVAL INTEGER)")
         val createContactsTable = ("CREATE TABLE IF NOT EXISTS $CONTACTS_TABLE ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_NAME TEXT, $COLUMN_NUMBER TEXT)")
@@ -1091,6 +1093,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
         values.put(COLUMN_HEIGHT, userData.height)
         values.put(COLUMN_WEIGHT, userData.weight)
         values.put(COLUMN_STEPS, userData.target)
+        values.put(COLUMN_EMAIL, userData.email)
 
         val db = this.writableDatabase
         db.replace(USER_TABLE, null, values)
@@ -1111,7 +1114,7 @@ class MyDBHandler(context: Context, name: String?, factory: SQLiteDatabase.Curso
             user.weight = cursor.getInt(4)
             user.target = cursor.getInt(5)
             user.name = "name"
-            user.email = "email"
+            user.email = cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL))
         }
         cursor.close()
         db.close()

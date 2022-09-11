@@ -527,7 +527,9 @@ class HealthActivity : AppCompatActivity(), DataListener {
                     )
                 }
 
-                uploadData("wagnoleao@gmail.com", bp, bph, sp)
+                val user = dbHandler.getUser()
+                Timber.d(user.email)
+                uploadData(user.email, bp, bph, sp)
             }
 
             healthList = when (viewH) {
