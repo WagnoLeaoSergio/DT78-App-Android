@@ -320,6 +320,8 @@ class HealthActivity : AppCompatActivity(), DataListener {
     fun uploadData(email: String, heart_rate: Int, blood_preassure: Int, oxygen_saturation: Int) {
         val client = OkHttpClient()
 
+        Toast.makeText(this, "Sending data to server", Toast.LENGTH_SHORT).show()
+
         val json = "{\"email\":\"wagnoleao@gmail.com\",\"heart_rate\":$heart_rate,\"blood_preassure\":$blood_preassure,\"oxygen_saturation\":$oxygen_saturation}"
         val body : RequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
@@ -332,6 +334,7 @@ class HealthActivity : AppCompatActivity(), DataListener {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
+                Toast.makeText(applicationContext, "Failed to send data to server", Toast.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -343,6 +346,7 @@ class HealthActivity : AppCompatActivity(), DataListener {
                         Timber.d("$name: $value")
                     }
                     Timber.d(response.body!!.string())
+                    Toast.makeText(applicationContext, "Data sended to server", Toast.LENGTH_SHORT).show()
                 }
             }
         })
@@ -523,25 +527,6 @@ class HealthActivity : AppCompatActivity(), DataListener {
                     )
                 }
 
-                /*
-                val builder = AlertDialog.Builder(this)
-                builder.setTitle("Testando")
-                builder.setMessage("We have a message")
-                //builder.setPositiveButton("OK", DialogInterface.OnClickListener(function = x))
-                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                    Toast.makeText(applicationContext,
-                        android.R.string.yes, Toast.LENGTH_SHORT).show()
-                }
-                builder.setNegativeButton(android.R.string.no) { dialog, which ->
-                    Toast.makeText(applicationContext,
-                        android.R.string.no, Toast.LENGTH_SHORT).show()
-                }
-                builder.setNeutralButton("Maybe") { dialog, which ->
-                    Toast.makeText(applicationContext,
-                        "Maybe", Toast.LENGTH_SHORT).show()
-                }
-                builder.show()
-                */
                 uploadData("wagnoleao@gmail.com", bp, bph, sp)
             }
 
