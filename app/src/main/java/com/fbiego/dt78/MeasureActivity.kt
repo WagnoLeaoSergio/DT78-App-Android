@@ -25,6 +25,7 @@
 
 package com.fbiego.dt78
 
+import android.os.SystemClock
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -295,6 +296,13 @@ class MeasureActivity : AppCompatActivity() {
             intent.putExtra("id", id)
             val pending = PendingIntent.getBroadcast(context.applicationContext, 54300 + id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
             alarmManager.setRepeating(AlarmManager.RTC, time, AlarmManager.INTERVAL_DAY, pending)
+
+            alarmManager.setInexactRepeating(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + 180000,
+                180000,
+                pending
+            )
         } else {
             val pendingIntent = PendingIntent.getBroadcast(context.applicationContext, 54300 + id, intent, PendingIntent.FLAG_NO_CREATE)
             if (pendingIntent != null) {
