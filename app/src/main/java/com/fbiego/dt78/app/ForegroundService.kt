@@ -830,7 +830,7 @@ class ForegroundService : Service(), MessageListener, PhonecallListener, DataLis
             Timber.d("second: ${cal.get(Calendar.SECOND)}")
             
             if (pendingMeasure){
-                if (pendingId == cal.get(Calendar.HOUR_OF_DAY) && cal.get(Calendar.MINUTE) <= 30){
+                if (pendingId == cal.get(Calendar.MINUTE) && cal.get(Calendar.SECOND) <= 30){
                     retryMeasure(dbHandler, true)
                 } else {
                     retryMeasure(dbHandler, false)

@@ -131,12 +131,10 @@
         android:id="@+id/healthCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
-        app:cardBackgroundColor="@color/colorCardBackground"
         android:onClick="measure"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout">
+        app:cardBackgroundColor="@color/colorCardBackground"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        tools:layout_editor_absoluteX="10dp">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -145,35 +143,33 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_margin="15dp"
                 android:id="@+id/heart_beat"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_margin="15dp"
+                android:src="@drawable/ic_heart_beat"
+                android:visibility="gone"
                 app:layout_constraintDimensionRatio="1:1"
-                app:tint="?attr/colorIcons"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/ic_heart_beat"
-                android:visibility="gone"/>
+                app:tint="?attr/colorIcons" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/heart_beat"
-                app:layout_constraintTop_toTopOf="parent"
-                android:orientation="vertical"
-                >
-
+                app:layout_constraintTop_toTopOf="parent">
 
 
                 <TextView
                     android:id="@+id/tapInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_margin="5dp"
-                    android:text="@string/start_measure"/>
+                    android:gravity="center"
+                    android:text="@string/start_measure" />
 
                 <TextView
                     android:id="@+id/valueHealth"
@@ -192,7 +188,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:indeterminate="true"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
 
             </LinearLayout>

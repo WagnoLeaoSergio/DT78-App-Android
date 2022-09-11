@@ -57,6 +57,7 @@ class MeasureActivity : AppCompatActivity() {
     private var measureAdapter = MeasureAdapter(measureList)
     var start = 0
     var interval = 2
+    var minutesInterval = 10;
     var end = 23
     var measure = false
     var setPref: SharedPreferences? = null
@@ -149,11 +150,15 @@ class MeasureActivity : AppCompatActivity() {
 
     private fun updateList(){
         val hr = Calendar.getInstance(Locale.getDefault()).get(Calendar.HOUR_OF_DAY)
+        val min = Calendar.getInstance(Locale.getDefault()).get(Calendar.MINUTE)
+
         val dbHandler = MyDBHandler(this, null, null, 1)
         measureList.clear()
-        for (x in start..end step interval){
-            val dat = getMsName(dbHandler.getMeasure(x))
-            measureList.add(MeasureData("$x:00", if (x > hr ) getString(R.string.waiting) else dat))
+        for (x in start..end step interval) {
+            for (y in 0..(60 - minutesInterval) step minutesInterval) {
+                val dat = getMsName(dbHandler.getMeasure(x))
+                measureList.add(MeasureData("$x:$y", if (x > hr ) getString(R.string.waiting) else dat))
+            }
         }
         measureAdapter.update(measureList)
     }
@@ -174,7 +179,7 @@ class MeasureActivity : AppCompatActivity() {
             }
             R.id.interval -> {
                 title =  getString(R.string.interval)
-                for (x in 2..4){
+                for (x in 1..4){
                     items.add("$x "+ getString(R.string.hours))
                     value.add(x)
                 }
@@ -270,21 +275,30 @@ class MeasureActivity : AppCompatActivity() {
         }
         val cal = Calendar.getInstance(Locale.getDefault())
         val hr = cal.get(Calendar.HOUR_OF_DAY)
+        val min = cal.get(Calendar.MINUTE)
+
         cal.set(Calendar.MILLISECOND, 0)
         cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0)
-        for (x in 0..23){
-            if (als.contains(x) && measure){
-                cal.set(Calendar.HOUR_OF_DAY, x)
-                val time = if (x > hr){
-                    cal.timeInMillis
+
+        var idAcc = 0;
+
+        for (x in 0..23) {
+            for (y in 0..(60 - minutesInterval) step minutesInterval) {
+                if (als.contains(x) && measure){
+                    cal.set(Calendar.HOUR_OF_DAY, x)
+                    cal.set(Calendar.MINUTE, y)
+                    val time = if (x > hr){
+                        cal.timeInMillis
+                    } else {
+                        cal.timeInMillis + 86400000
+                    }
+                    setMeasure(context, x + idAcc, time)
                 } else {
-                    cal.timeInMillis + 86400000
+                    setMeasure(context, x + idAcc, null)
                 }
-                setMeasure(context, x, time)
-            } else {
-                setMeasure(context, x, null)
             }
+            idAcc += 60;
         }
     }
 
