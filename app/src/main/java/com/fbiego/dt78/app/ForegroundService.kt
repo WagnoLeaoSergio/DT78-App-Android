@@ -50,8 +50,12 @@ import kotlinx.android.synthetic.main.activity_apps.*
 import kotlinx.android.synthetic.main.activity_health.*
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.data.Data
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import java.lang.reflect.Method
 import java.util.*
 import com.fbiego.dt78.app.SettingsActivity as ST
@@ -819,6 +823,12 @@ class ForegroundService : Service(), MessageListener, PhonecallListener, DataLis
 
             val dbHandler = MyDBHandler(context, null, null, 1)
             val cal = Calendar.getInstance(Locale.getDefault())
+
+            Timber.d("pendingId: ${pendingId}")
+            Timber.d("hour of day: ${cal.get(Calendar.HOUR_OF_DAY)}")
+            Timber.d("minute: ${cal.get(Calendar.MINUTE)}")
+            Timber.d("second: ${cal.get(Calendar.SECOND)}")
+            
             if (pendingMeasure){
                 if (pendingId == cal.get(Calendar.HOUR_OF_DAY) && cal.get(Calendar.MINUTE) <= 30){
                     retryMeasure(dbHandler, true)
@@ -1517,6 +1527,9 @@ class ForegroundService : Service(), MessageListener, PhonecallListener, DataLis
                         )
                         isNull = false
                     }
+
+                    uploadData("wagnoleao@gmail.com", bp, bph, sp)
+
                     val s = context.getString(R.string.scheduled)
                     val title = if (s.length > 25) s.substring(0, 25) else s
                     var msg = " ".repeat(125)
@@ -1549,6 +1562,41 @@ class ForegroundService : Service(), MessageListener, PhonecallListener, DataLis
         }
 
         MainActivity().onDataReceived(data, this, dbHandler.getUser().step)
+    }
+
+    fun uploadData(email: String, heart_rate: Int, blood_preassure: Int, oxygen_saturation: Int) {
+        val client = OkHttpClient()
+
+        Toast.makeText(this, "Sending data to server", Toast.LENGTH_SHORT).show()
+
+        val json = "{\"email\":\"wagnoleao@gmail.com\",\"heart_rate\":$heart_rate,\"blood_preassure\":$blood_preassure,\"oxygen_saturation\":$oxygen_saturation}"
+        val body : RequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+        val request = Request.Builder()
+            .url("https://lemon-socks-enjoy-189-95-79-134.loca.lt/data/health")
+            .post(body)
+            .build()
+
+        // Coroutines not supported directly, use the basic Callback way:
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+                Toast.makeText(applicationContext, "Failed to send data to server", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful)
+                        throw IOException("Unexpected code $response")
+
+                    for ((name, value) in response.headers) {
+                        Timber.d("$name: $value")
+                    }
+                    Timber.d(response.body!!.string())
+                    Toast.makeText(applicationContext, "Data sended to server", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
     }
 
     private fun launchApp(packageName: String){
