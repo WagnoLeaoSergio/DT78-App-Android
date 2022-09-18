@@ -1525,7 +1525,7 @@ class ForegroundService : Service(), MessageListener, PhonecallListener, DataLis
 
                     val user = dbHandler.getUser()
                     Timber.d(user.email)
-                    uploadData(user.email, bp, bph, sp)
+                    uploadData(user.email, bp, bph, bpl, sp)
 
                     val s = context.getString(R.string.scheduled)
                     val title = if (s.length > 25) s.substring(0, 25) else s
@@ -1561,12 +1561,12 @@ class ForegroundService : Service(), MessageListener, PhonecallListener, DataLis
         MainActivity().onDataReceived(data, this, dbHandler.getUser().step)
     }
 
-    fun uploadData(email: String, heart_rate: Int, blood_preassure: Int, oxygen_saturation: Int) {
+    fun uploadData(email: String, heart_rate: Int, blood_preassure_high: Int, blood_preassure_low: Int, oxygen_saturation: Int) {
         val client = OkHttpClient()
 
-        Toast.makeText(this, "Sending data to server", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "DT78: Sending data to server", Toast.LENGTH_SHORT).show()
 
-        val json = "{\"email\":\"wagnoleao@gmail.com\",\"heart_rate\":$heart_rate,\"blood_preassure\":$blood_preassure,\"oxygen_saturation\":$oxygen_saturation}"
+        val json = "{\"email\":$email,\"heart_rate\":$heart_rate,\"blood_preassure\":[$blood_preassure_high, $blood_preassure_low],\"oxygen_saturation\":$oxygen_saturation}"
         val body : RequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
         val request = Request.Builder()
