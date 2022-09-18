@@ -317,17 +317,18 @@ class HealthActivity : AppCompatActivity(), DataListener {
         healthAdapter.update(healthList)
     }
 
-    fun uploadData(email: String, heart_rate: Int, blood_preassureHigh: Int, blood_preassureLow: Int, oxygen_saturation: Int) {
+    fun uploadData(email: String, heart_rate: Int, blood_preassure_high: Int, blood_preassure_low: Int, oxygen_saturation: Int) {
         val client = OkHttpClient()
 
-        Timber.d(email);
         Toast.makeText(this, "DT78: Sending data to server", Toast.LENGTH_SHORT).show()
 
-        val json = "{\"email\":$email,\"heart_rate\":$heart_rate,\"blood_preassure\":[$blood_preassureHigh, $blood_preassureLow],\"oxygen_saturation\":$oxygen_saturation}"
+        val json = "{\"email\":\"$email\",\"heart_rate\":$heart_rate,\"blood_preassure_high\":$blood_preassure_high,\"blood_preassure_low\":$blood_preassure_low,\"oxygen_saturation\":$oxygen_saturation}"
+
+        Timber.d(json)
         val body : RequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
         val request = Request.Builder()
-            .url("https://lemon-socks-enjoy-189-95-79-134.loca.lt/data/health")
+            .url("https://dry-books-tap-189-36-218-52.loca.lt/data/health")
             .post(body)
             .build()
 
@@ -347,7 +348,6 @@ class HealthActivity : AppCompatActivity(), DataListener {
                         Timber.d("$name: $value")
                     }
                     Timber.d(response.body!!.string())
-                    Toast.makeText(applicationContext, "Data sended to server", Toast.LENGTH_SHORT).show()
                 }
             }
         })
